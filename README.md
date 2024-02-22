@@ -1,7 +1,12 @@
 # nSLOCer
 
 This is a small command line tool to get the normalized source lines of Code (`nSLOC`), written in Rust. 
-Currently it only supports `Rust` and `Go`.
+Currently it supports the following languages:
+
+- Go
+- Rust
+- Solidity
+- Javascript
 
 It is based on [tokei](https://github.com/XAMPPRocky/tokei), which does most of the heavy lifting.
 
@@ -39,7 +44,7 @@ A simple tool to calculate normalized lines of code, utilitizing tokei in the ba
 Usage: nslocer [OPTIONS] --language <LANGUAGE>
 
 Options:
-  -l, --language <LANGUAGE>            [possible values: rust, go]
+  -l, --language <LANGUAGE>            [possible values: rust, go, solidity, javascript]
   -p, --path <PATH>                    [default: .]
   -e, --excluded-path <EXCLUDED_PATH>  [default: tests]
   -h, --help                           Print help
