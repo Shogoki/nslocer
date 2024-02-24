@@ -9,9 +9,9 @@ pub mod solidity;
 pub fn transform(inp: &[u8], lang_type: &LanguageType) -> String {
     match lang_type {
         &LanguageType::Rust => transform_rust(inp, lang_type),
-        &LanguageType::Solidity=> transform_solidity(inp, lang_type),
+        &LanguageType::Solidity => transform_solidity(inp, lang_type),
         // we can use the same normalization for js like for solidity
-        &LanguageType::JavaScript=> transform_solidity(inp, lang_type),
+        &LanguageType::JavaScript => transform_solidity(inp, lang_type),
         _ => String::from_utf8_lossy(inp).to_string(),
     }
 }
