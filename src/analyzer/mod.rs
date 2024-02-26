@@ -34,7 +34,7 @@ impl Analyzer {
         match self.lang {
             Lang::Solidity => Some(transform_solidity),
             Lang::Rust => Some(transform_rust),
-            Lang::Javascript => Some(transform::transform),
+            Lang::Javascript => Some(transform_solidity),
             Lang::Go => None,
         }
     }
@@ -54,6 +54,7 @@ impl Analyzer {
 
         // Transform code into a specific format before analyzing
         config.transform_fn = self.transform();
+        config.types = Some(vec![self.language_type()]);
 
         languages.get_statistics(
             &paths,

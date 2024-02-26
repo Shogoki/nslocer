@@ -1,11 +1,12 @@
-use std::{io::{ErrorKind, Write}, process::{Command, Stdio}};
+use std::{
+    io::{ErrorKind, Write},
+    process::{Command, Stdio},
+};
 
 use tokei::LanguageType;
 
-pub fn transform_rust(inp: &[u8], _: &LanguageType) -> String {
+pub fn transform_rust(_: &[u8], _: &LanguageType) -> String {
     // this is only for rust
-
-    let text = inp.to_vec();
 
     let mut fmt_cmd = Command::new("rustfmt");
     fmt_cmd.stdin(Stdio::piped());
@@ -22,16 +23,10 @@ pub fn transform_rust(inp: &[u8], _: &LanguageType) -> String {
     use_small_heuristics="Max" # This makes all line widths equal max_width
     where_single_line=true
     */
-    let mut child = fmt_cmd.spawn().expect("Failed to spawn rustfmt");
-    let mut stdin = child.stdin.take().expect("Failed to open stdin");
-    std::thread::spawn(move || {
-        stdin
-            .write_all(&text)
-            .expect("Failed to write stdin for rustfmt");
-    });
+    let child = fmt_cmd.spawn().expect("Failed to spawn rustfmt");
 
     let output = match child.wait_with_output() {
-        Ok(o) => o, 
+        Ok(o) => o,
         Err(e) => {
             if e.kind() == ErrorKind::NotFound {
                 panic!("rustfmt was not found! Please install or check PATH!");
