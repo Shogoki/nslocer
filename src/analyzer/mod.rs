@@ -9,6 +9,7 @@ pub enum Lang {
     Solidity,
     Rust,
     Javascript,
+    Go,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -29,11 +30,12 @@ impl Analyzer {
         Self { lang }
     }
 
-    fn transform(&self) -> fn(inp: &[u8], _: &LanguageType) -> String {
+    fn transform(&self) -> Option<fn(inp: &[u8], _: &LanguageType) -> String> {
         match self.lang {
-            Lang::Solidity => transform_solidity,
-            Lang::Rust => transform_rust,
-            Lang::Javascript => transform::transform,
+            Lang::Solidity => Some(transform_solidity),
+            Lang::Rust => Some(transform_rust),
+            Lang::Javascript => Some(transform::transform),
+            Lang::Go => None,
         }
     }
 
@@ -42,6 +44,7 @@ impl Analyzer {
             Lang::Solidity => LanguageType::Solidity,
             Lang::Rust => LanguageType::Rust,
             Lang::Javascript => LanguageType::JavaScript,
+            Lang::Go => LanguageType::Go,
         }
     }
 
@@ -50,8 +53,7 @@ impl Analyzer {
         let mut config = tokei::Config::default();
 
         // Transform code into a specific format before analyzing
-        let transform = || self.transform();
-        config.transform_fn = Some(transform());
+        config.transform_fn = self.transform();
 
         languages.get_statistics(
             &paths,
@@ -79,6 +81,7 @@ impl Analyzer {
 
     /*
      * TODO:
+     * - Comments ratio
      * - Render reports
      * - Analyze imports
      */

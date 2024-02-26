@@ -18,6 +18,7 @@ pub fn run(args: Args) -> Result<Vec<FileMetrics>, Error> {
         Analyzer::new(Lang::Solidity),
         Analyzer::new(Lang::Rust),
         Analyzer::new(Lang::Javascript),
+        Analyzer::new(Lang::Go),
     ];
 
     let metrics = analyzers
