@@ -11,6 +11,8 @@ pub struct Args {
     paths: Vec<String>,
     #[arg(short, long)]
     excluded_paths: Vec<String>,
+    #[arg(short, long)]
+    base_path: String,
 }
 
 pub fn run(args: Args) -> Result<Vec<FileMetrics>, Error> {
@@ -22,7 +24,7 @@ pub fn run(args: Args) -> Result<Vec<FileMetrics>, Error> {
     ];
 
     let metrics = analyzers
-        .map(|a| a.analyze(&args.paths, &args.excluded_paths))
+        .map(|a| a.analyze(&args.paths, &args.excluded_paths, &args.base_path))
         .into_iter()
         .flatten()
         .collect();

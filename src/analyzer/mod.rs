@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use serde::Serialize;
 use tokei::{LanguageType, Languages};
 
@@ -14,7 +16,7 @@ pub enum Lang {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct FileMetrics {
-    file_name: String,
+    file_path: String,
     comment: usize,
     blank: usize,
     nsloc: usize,
@@ -48,7 +50,12 @@ impl Analyzer {
         }
     }
 
-    pub fn analyze(&self, paths: &Vec<String>, excluded: &Vec<String>) -> Vec<FileMetrics> {
+    pub fn analyze(
+        &self,
+        paths: &Vec<String>,
+        excluded: &Vec<String>,
+        base_path: &str,
+    ) -> Vec<FileMetrics> {
         let mut languages = Languages::new();
         let mut config = tokei::Config::default();
 
@@ -68,7 +75,13 @@ impl Analyzer {
                 .iter()
                 .enumerate()
                 .map(|(_, rep)| FileMetrics {
-                    file_name: rep.name.to_str().expect("Couldn't unpack path").to_string(),
+                    file_path: (*rep)
+                        .name
+                        .strip_prefix(Path::new(base_path))
+                        .expect("Base path is wrong")
+                        .to_str()
+                        .expect("Failed building file path")
+                        .to_string(),
                     comment: (*rep).stats.comments,
                     blank: (*rep).stats.blanks,
                     nsloc: (*rep).stats.code,
@@ -82,7 +95,6 @@ impl Analyzer {
 
     /*
      * TODO:
-     * - Comments ratio
      * - Render reports
      * - Analyze imports
      */
